@@ -1,0 +1,10 @@
+[server]
+runOnSave = true
+enableStaticServing = true
+port = 3000
+
+[theme]
+base = "light"
+
+[client]
+showSidebarNavigation = true
