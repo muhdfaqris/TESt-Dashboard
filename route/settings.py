@@ -2,10 +2,11 @@ import os
 import streamlit as st
 import pandas as pd
 from utils.db import init_db, append_db, total_record, load_db
-from utils.ui import hide_streamlit
+from utils.ui import hide_streamlit_css
 
 st.set_page_config(layout="wide")
-hide_streamlit()
+hide_streamlit_css()
+
 st.markdown('<div style="font-size: 2rem; font-weight: bold; color: #333; margin-bottom: 1rem;">Settings</div>'
             , unsafe_allow_html=True)
 

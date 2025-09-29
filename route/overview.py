@@ -4,10 +4,13 @@ import pandas as pd
 from utils.calc import calculate_kpi, calculate_delta, calculate_prev
 from utils.filters import create_filters, apply_filters
 from utils.db import total_record
-from utils.ui import hide_streamlit
+from utils.ui import hide_streamlit_css, metric_card_css, container_card_css
 
 st.set_page_config(layout="wide")
-hide_streamlit()
+hide_streamlit_css()
+metric_card_css()
+container_card_css()
+
 st.markdown('<div style="font-size: 2rem; font-weight: bold; color: #333; margin-bottom: 1rem;">Overview</div>'
             , unsafe_allow_html=True)
 
@@ -55,7 +58,6 @@ def metric_cards():
     column = st.columns(4)
 
     with column[0]:
-        with st.container(border=True):
             st.metric(
                 label="Total Work Orders",
                 value=current_kpi['total_orders'],
@@ -64,31 +66,28 @@ def metric_cards():
             )
 
     with column[1]:
-        with st.container(border=True):
-            st.metric(
-                label="Completion Rate",
-                value=f"{current_kpi['completion_rate']:.1f}%",
-                delta=f"{delta_kpi.get('completion_rate', 0):.1f}%" if delta_kpi.get('completion_rate') is not None else "0.0%",
-                help="Percentage of completed work orders"
-            )
+        st.metric(
+            label="Completion Rate",
+            value=f"{current_kpi['completion_rate']:.1f}%",
+            delta=f"{delta_kpi.get('completion_rate', 0):.1f}%" if delta_kpi.get('completion_rate') is not None else "0.0%",
+            help="Percentage of completed work orders"
+        )
 
     with column[2]:
-        with st.container(border=True):
-            st.metric(
-                label="Avg MTTR (hrs)",
-                value=f"{current_kpi['avg_mttr']:.2f}",
-                delta=f"{delta_kpi.get('avg_mttr', 0):.1f}%" if delta_kpi.get('avg_mttr') is not None else "0.0%",
-                help="Average Mean Time To Repair"
-            )
+        st.metric(
+            label="Avg MTTR (hrs)",
+            value=f"{current_kpi['avg_mttr']:.2f}",
+            delta=f"{delta_kpi.get('avg_mttr', 0):.1f}%" if delta_kpi.get('avg_mttr') is not None else "0.0%",
+            help="Average Mean Time To Repair"
+        )
 
     with column[3]:
-        with st.container(border=True):
-            st.metric(
-                label="Avg Duration (hrs)",
-                value=f"{current_kpi['avg_duration']:.2f}",
-                delta=f"{delta_kpi.get('avg_duration', 0):.1f}%" if delta_kpi.get('avg_duration') is not None else "0.0%",
-                help="Average activity duration"
-            )
+        st.metric(
+            label="Avg Duration (hrs)",
+            value=f"{current_kpi['avg_duration']:.2f}",
+            delta=f"{delta_kpi.get('avg_duration', 0):.1f}%" if delta_kpi.get('avg_duration') is not None else "0.0%",
+            help="Average activity duration"
+        )
 
 def workOrder_statusDist():
     """ Work Order status distribution pie chart """
@@ -102,7 +101,14 @@ def workOrder_statusDist():
             title="Work Order Status Distribution",
             color_discrete_sequence=px.colors.qualitative.Set3
         )
-        fig_status_pie.update_layout(height=400, showlegend=True)
+        fig_status_pie.update_layout(
+            height=400, 
+            showlegend=True,
+            margin=dict(l=20, r=20, t=40, b=20),
+            legend=dict(orientation="v", yanchor="middle", y=1, xanchor="left", x=0.8),
+            #paper_bgcolor="rgba(0,0,0,0)",
+            #plot_bgcolor="rgba(0,0,0,0)"
+        )
         st.plotly_chart(fig_status_pie, use_container_width=True)
     else:
         st.info("No status data available")
@@ -213,12 +219,11 @@ def StationMachine_top():
 metric_cards()
 column = st.columns([1, 1])
 with column[0]:
-        with st.container(border=True):
+        with st.container():
             workOrder_statusDist()
 with column[1]:
-    with st.container(border=True):
+        with st.container():
             workOrder_status()
-
-with st.container(border=True):
+with st.container():
     workOrder_trend()
 

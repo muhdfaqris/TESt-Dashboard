@@ -1,9 +1,9 @@
 import streamlit as st 
 import pandas as pd
-from utils.ui import hide_streamlit
+from utils.ui import hide_streamlit_css
 
 st.set_page_config(layout="wide")
-hide_streamlit()
+hide_streamlit_css()
 st.markdown('<div style="font-size: 2rem; font-weight: bold; color: #333; margin-bottom: 1rem;">Data Records</div>'
             , unsafe_allow_html=True)
 
@@ -13,7 +13,7 @@ col1, col2 = st.columns([6, 0.5])
 
 with col1:
     search_term = st.text_input(
-        "",
+        "search_input",
         placeholder="Search by any field...",
         help="Enter keywords to filter the table. Search is case-insensitive.",
         label_visibility="collapsed",
@@ -25,7 +25,7 @@ with col2:
         ":material/search:",
         type="primary",
         help="Apply search filter",
-        use_container_width=True
+        width='stretch'
     )
 
 display_df = df.copy()
@@ -90,7 +90,7 @@ available_columns = [col for col in table_columns if col in display_df.columns]
 if not display_df.empty:
     st.dataframe(
         display_df[available_columns],
-        use_container_width=True,
+        width='stretch',
         height=600,
         column_config={
             "ID": st.column_config.NumberColumn(
