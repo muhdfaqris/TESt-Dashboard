@@ -14,29 +14,35 @@ def main():
 
     # Define pages
     overview = st.Page(
-        "route/overview.py", 
-        title = "Overview", 
-        icon=":material/overview:", 
+        "route/overview.py",
+        title = "Overview",
+        icon=":material/overview:",
         default=True
     )
     data_records = st.Page(
-        "route/data_records.py", 
-        title = "Data records", 
+        "route/data_records.py",
+        title = "Data records",
         icon=":material/database:"
     )
     staff = st.Page(
-        "route/staff.py", 
+        "route/staff.py",
         title = "Staff",
         icon=":material/people:"
     )
+    calendar = st.Page(
+        "route/calendar.py",
+        title = "Calendar",
+        icon=":material/calendar_today:"
+    )
     settings = st.Page(
-        "route/settings.py", 
+        "route/settings.py",
         title = "Settings",
         icon=":material/settings:"
     )
     pg = st.navigation(
         {
             "Dashboard": [overview, data_records, staff],
+            "Management": [calendar],
             "Configurations": [settings]
         }
     )

@@ -1,6 +1,7 @@
 import streamlit as st
 import plotly.express as px
 import pandas as pd
+import streamlit_shadcn_ui as ui
 from utils.calc import calculate_kpi, calculate_delta, calculate_prev
 from utils.filters import create_filters, apply_filters
 from utils.db import total_record
@@ -216,14 +217,22 @@ def StationMachine_top():
     else:
         st.info("No data available for station/machine analysis")
 
-metric_cards()
-column = st.columns([1, 1])
-with column[0]:
+tabs = ui.tabs(options=[" Overview", "Work Orders"], default_value=" Overview", key="main_tabs")
+
+if tabs == " Overview":
+    metric_cards()
+    column = st.columns([1, 1])
+    with column[0]:
         with st.container():
             workOrder_statusDist()
-with column[1]:
+    with column[1]:
         with st.container():
             workOrder_status()
-with st.container():
-    workOrder_trend()
+
+    with st.container():
+        workOrder_trend()
+        
+elif tabs == "Work Orders":
+    with st.container():
+        StationMachine_top()
 
