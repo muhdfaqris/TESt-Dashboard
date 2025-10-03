@@ -11,7 +11,7 @@ def preprocess_data():
     if df.empty:
         return df
     
-    # Data preprocessing
+    # Convert datetime
     columns = [
         'Notification date', 
         'Malfunction Start Date', 
@@ -19,10 +19,7 @@ def preprocess_data():
         'Activity Start Date',
         'Activity Stop Date'
         ]
-    try:
-        df[columns] = df[columns].apply(pd.to_datetime, format='%m/%d/%Y %H:%M')
-    except Exception:
-        df[columns] = df[columns].apply(pd.to_datetime, errors='coerce')
+    df[columns] = df[columns].apply(pd.to_datetime, format='%d/%m/%Y %H:%M', errors='coerce')
 
     # Fill missing values
     columns = [
