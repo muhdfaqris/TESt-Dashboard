@@ -30,6 +30,9 @@ def preprocess_data():
         'Activity by 1'
         ]
     df[columns] = df[columns].fillna('Unknown')
+    
+    # Normalize whitespace in staff names to prevent duplicates
+    df['Activity by 1'] = df['Activity by 1'].astype(str).apply(lambda x: ' '.join(x.split()))
 
     # Convert numeric columns
     num_columns = [

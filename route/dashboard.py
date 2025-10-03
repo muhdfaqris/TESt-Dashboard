@@ -12,8 +12,8 @@ hide_streamlit_css()
 metric_card_css()
 container_card_css()
 
-st.markdown('<div style="font-size: 2rem; font-weight: bold; color: #333; margin-bottom: 1rem;">Overview</div>'
-            , unsafe_allow_html=True)
+# st.markdown('<div style="font-size: 2rem; font-weight: bold; color: #333; margin-bottom: 1rem;">Overview</div>'
+#             , unsafe_allow_html=True)
 
 df = st.session_state.df
 
@@ -217,9 +217,45 @@ def StationMachine_top():
     else:
         st.info("No data available for station/machine analysis")
 
-tabs = ui.tabs(options=[" Overview", "Work Orders"], default_value=" Overview", key="main_tabs")
+def staffActivity_types():
+    """Staff activity types - what types of work each staff member specializes in"""
+    
+    if not filtered_df.empty:
+        staff_activity_df = pd.crosstab(
+            filtered_df['Activity by 1'],
+            filtered_df['Activity Code'],
+            margins=False
+        ).reset_index()
+        
+        staff_activity_melted = staff_activity_df.melt(
+            id_vars=['Activity by 1'],
+            var_name='Activity Type',
+            value_name='Count'
+        )
+        
+        staff_activity_melted = staff_activity_melted[staff_activity_melted['Count'] > 0]
 
-if tabs == " Overview":
+        fig_staff_activity = px.bar(
+            staff_activity_melted,
+            x='Activity by 1',
+            y='Count',
+            color='Activity Type',
+            title="Staff Activity Types Distribution",
+            labels={'Count': 'Number of Activities', 'Activity by 1': 'Staff Member'},
+            color_discrete_sequence=px.colors.qualitative.Set3
+        )
+        fig_staff_activity.update_layout(
+            height=600,
+            xaxis_tickangle=-45,
+            legend=dict(orientation="v", yanchor="middle", y=0.5)
+        )
+        st.plotly_chart(fig_staff_activity, use_container_width=True)
+    else:
+        st.info("No data available for staff activity types analysis")
+
+tabs = ui.tabs(options=["Overview", "Details"], default_value="Overview", key="dashboard_tabs")
+
+if tabs == "Overview":
     metric_cards()
     column = st.columns([1, 1])
     with column[0]:
@@ -232,7 +268,6 @@ if tabs == " Overview":
     with st.container():
         workOrder_trend()
         
-elif tabs == "Work Orders":
+elif tabs == "Details":
     with st.container():
-        StationMachine_top()
-
+        staffActivity_types()

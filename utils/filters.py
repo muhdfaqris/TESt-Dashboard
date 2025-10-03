@@ -45,14 +45,7 @@ def create_filters(df):
     type_options = ['All'] + list(df['Notification type'].unique())
     selected_types = st.sidebar.multiselect("Notification Type", type_options, default=['All'])
     
-    # Normalize whitespace and fallback
-    staff_series = df['Activity by 1'].dropna()
-    normalized_staff = staff_series.astype(str).apply(lambda x: ' '.join(x.split()))
-    unique_staff = normalized_staff.unique()
-    filtered_staff = [x for x in unique_staff if x != 'Unknown' and x != '']
-    staff_options = ['All'] + filtered_staff
-    if 'Unknown' in unique_staff:
-        staff_options.append('Unknown')
+    staff_options = ['All'] + list(df['Activity by 1'].unique())
     selected_staff = st.sidebar.multiselect("Staff", staff_options, default=['All'])
 
     date_range = (date_range1, date_range2)
@@ -94,10 +87,6 @@ def apply_filters(df, filters):
     if 'All' not in filters['types'] and filters['types']:
         filtered_df = filtered_df[filtered_df['Notification type'].isin(filters['types'])]
     if 'All' not in filters['staff'] and filters['staff']:
-        # Normalize the staff names in the dataframe for comparison
-        normalized_activity_by_1 = filtered_df['Activity by 1'].astype(str).apply(lambda x: ' '.join(x.split()))
-        # Also normalize the selected staff filters for comparison
-        normalized_selected_staff = [x if pd.isna(x) else ' '.join(x.split()) for x in filters['staff']]
-        filtered_df = filtered_df[normalized_activity_by_1.isin(normalized_selected_staff)]
+        filtered_df = filtered_df[filtered_df['Activity by 1'].isin(filters['staff'])]
 
     return filtered_df

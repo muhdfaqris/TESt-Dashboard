@@ -13,10 +13,10 @@ def main():
     st.session_state.df = df
 
     # Define pages
-    overview = st.Page(
-        "route/overview.py",
-        title = "Overview",
-        icon=":material/overview:",
+    dashboard = st.Page(
+        "route/dashboard.py",
+        title = "Dashboard",
+        icon=":material/dashboard:",
         default=True
     )
     data_records = st.Page(
@@ -39,10 +39,11 @@ def main():
         title = "Settings",
         icon=":material/settings:"
     )
+    
     pg = st.navigation(
-        {
-            "Dashboard": [overview, data_records, staff],
-            "Management": [calendar],
+        { 
+            "Menu": [dashboard, data_records],
+            "Management": [staff, calendar],
             "Configurations": [settings]
         }
     )
