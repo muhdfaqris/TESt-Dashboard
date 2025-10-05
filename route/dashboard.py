@@ -5,12 +5,13 @@ import streamlit_shadcn_ui as ui
 from utils.calc import calculate_kpi, calculate_delta, calculate_prev
 from utils.filters import create_filters, apply_filters
 from utils.db import total_record
-from utils.ui import hide_streamlit_css, metric_card_css, container_card_css
+from utils.ui import hide_streamlit_css, metric_card_css, container_card_css, tabs_css
 
 st.set_page_config(layout="wide")
 hide_streamlit_css()
 metric_card_css()
 container_card_css()
+tabs_css()
 
 # st.markdown('<div style="font-size: 2rem; font-weight: bold; color: #333; margin-bottom: 1rem;">Overview</div>'
 #             , unsafe_allow_html=True)
@@ -105,10 +106,9 @@ def workOrder_statusDist():
         fig_status_pie.update_layout(
             height=400, 
             showlegend=True,
-            margin=dict(l=20, r=20, t=40, b=20),
-            legend=dict(orientation="v", yanchor="middle", y=1, xanchor="left", x=0.8),
-            #paper_bgcolor="rgba(0,0,0,0)",
-            #plot_bgcolor="rgba(0,0,0,0)"
+            margin=dict(l=20, r=20, t=100, b=20),
+            legend=dict(orientation="v", yanchor="middle", y=1.1, xanchor="left", x=0.8),
+            title={'x': 0, 'y': 1, 'yanchor': 'top', 'pad': {'t': 10, 'b': 20} }
         )
         st.plotly_chart(fig_status_pie, use_container_width=True)
     else:
@@ -118,21 +118,18 @@ def workOrder_status():
     """ Work Order status by notification type stacked bar chart """
 
     if not filtered_df.empty:
-        # Create crosstab for status by type
         status_type_df = pd.crosstab(
             filtered_df['Notification type'], 
             filtered_df['Work Order Status'], 
             margins=False
         ).reset_index()
         
-        # Melt for plotly
         status_melted = status_type_df.melt(
             id_vars=['Notification type'], 
             var_name='Status', 
             value_name='Count'
         )
         
-        # Create stacked bar chart
         fig_status = px.bar(
             status_melted,
             x='Notification type',
@@ -145,7 +142,8 @@ def workOrder_status():
         fig_status.update_layout(
             height=400,
             xaxis_tickangle=-45,
-            legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
+            legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+            title={'x': 0, 'y': 1, 'yanchor': 'top', 'pad': {'t': 10, 'b': 20} }
         )
         st.plotly_chart(fig_status, use_container_width=True)
     else:
@@ -176,7 +174,11 @@ def workOrder_trend():
             labels={'Count': 'Number of Work Orders', 'Week': 'Week'},
             color_discrete_sequence=px.colors.qualitative.Set2
         )
-        fig_weekly.update_layout(height=400, xaxis_tickangle=-45)
+        fig_weekly.update_layout(
+            height=400, 
+            xaxis_tickangle=-45,
+            title={'x': 0, 'y': 1, 'yanchor': 'top', 'pad': {'t': 10, 'b': 20} }
+        )
         st.plotly_chart(fig_weekly, use_container_width=True)
     else:
         st.info("No data available for weekly trend analysis")
@@ -253,21 +255,39 @@ def staffActivity_types():
     else:
         st.info("No data available for staff activity types analysis")
 
-tabs = ui.tabs(options=["Overview", "Details"], default_value="Overview", key="dashboard_tabs")
+# tabs = ui.tabs(options=["Overview", "Details"], default_value="Overview", key="dashboard_tabs")
 
-if tabs == "Overview":
+# if tabs == "Overview":
+#     metric_cards()
+#     column = st.columns([1, 1])
+#     with column[0]:
+#         with st.container():
+#             workOrder_statusDist()
+#     with column[1]:
+#         with st.container():
+#             workOrder_status()
+
+#     with st.container():
+#         workOrder_trend()
+        
+# elif tabs == "Details":
+#     with st.container():
+#         staffActivity_types()
+
+tab1, tab2 = st.tabs(["Overview", "Analytics"], default="Overview")
+
+with tab1:
     metric_cards()
     column = st.columns([1, 1])
     with column[0]:
-        with st.container():
+        with st.container(key="overview_card1"):
             workOrder_statusDist()
     with column[1]:
-        with st.container():
+        with st.container(key="overview_card2"):
             workOrder_status()
-
-    with st.container():
+    with st.container(key="overview_card3"):
         workOrder_trend()
-        
-elif tabs == "Details":
-    with st.container():
+
+with tab2:
+      with st.container():
         staffActivity_types()

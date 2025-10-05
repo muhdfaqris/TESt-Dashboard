@@ -17,7 +17,6 @@ record_count = total_record()
 
 if record_count > 0:
     st.success(f"Database: {record_count} records ")
-    # Load and show preview
     try:
         df = load_db()
     except Exception as e:
