@@ -103,16 +103,27 @@ def workOrder_statusDist():
             title="Work Order Status Distribution",
             color_discrete_sequence=px.colors.qualitative.Set3
         )
+        fig_status_pie.update_traces(
+            hovertemplate='<b>Status:</b> %{label}<br>' +
+            '<b>Count:</b> %{value}<br>' +
+            '<b>Percentage:</b> %{percent}<br>' +
+            '<extra></extra>', 
+            hoverlabel=dict(
+                bgcolor="#e6e6e6",
+                font_color="#000000",
+                bordercolor="#000000"
+            )
+        )
         fig_status_pie.update_layout(
             height=400, 
             showlegend=True,
             margin=dict(l=20, r=20, t=100, b=20),
-            legend=dict(orientation="v", yanchor="middle", y=1.1, xanchor="left", x=0.8),
+            legend=dict(orientation="v", yanchor="middle", y=1.1, xanchor="left", x=0.8, title=dict(text="Status")),
             title={'x': 0, 'y': 1, 'yanchor': 'top', 'pad': {'t': 10, 'b': 20} }
         )
         st.plotly_chart(fig_status_pie, use_container_width=True)
     else:
-        st.info("No status data available")
+        st.info("No data available")
 
 def workOrder_status():  
     """ Work Order status by notification type stacked bar chart """
@@ -123,14 +134,12 @@ def workOrder_status():
             filtered_df['Work Order Status'], 
             margins=False
         ).reset_index()
-        
         status_melted = status_type_df.melt(
             id_vars=['Notification type'], 
             var_name='Status', 
             value_name='Count'
         )
-        
-        fig_status = px.bar(
+        fig_status_bar = px.bar(
             status_melted,
             x='Notification type',
             y='Count',
@@ -139,15 +148,26 @@ def workOrder_status():
             labels={'Count': 'Number of Work Orders', 'Notification type': 'Type'},
             color_discrete_sequence=px.colors.qualitative.Pastel
         )
-        fig_status.update_layout(
+        fig_status_bar.update_traces(
+            hovertemplate='<b>Type:</b> %{x}<br>' +
+            '<b>Status:</b> %{fullData.name}<br>' +
+            '<b>Count:</b> %{y}<br>' +
+            '<extra></extra>',
+            hoverlabel=dict(
+                bgcolor="#e6e6e6",
+                font_color="#000000",
+                bordercolor="#000000"
+            )
+        )
+        fig_status_bar.update_layout(
             height=400,
             xaxis_tickangle=-45,
             legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
             title={'x': 0, 'y': 1, 'yanchor': 'top', 'pad': {'t': 10, 'b': 20} }
         )
-        st.plotly_chart(fig_status, use_container_width=True)
+        st.plotly_chart(fig_status_bar, use_container_width=True)
     else:
-        st.info("No data available for status composition")
+        st.info("No data available")
 
 def workOrder_trend():
     """ Work Order volume trend over time """
@@ -174,6 +194,17 @@ def workOrder_trend():
             labels={'Count': 'Number of Work Orders', 'Week': 'Week'},
             color_discrete_sequence=px.colors.qualitative.Set2
         )
+        fig_weekly.update_traces(
+            hovertemplate='<b>Week:</b> %{x|%Y-%m-%d}<br>' +
+            '<b>Type:</b> %{fullData.name}<br>' +
+            '<b>Count:</b> %{y}<br>' +
+            '<extra></extra>',
+            hoverlabel=dict(
+                bgcolor="#e6e6e6",
+                font_color="#000000",
+                bordercolor="#000000"
+            )
+        )
         fig_weekly.update_layout(
             height=400, 
             xaxis_tickangle=-45,
@@ -188,7 +219,6 @@ def StationMachine_top():
     """ Top 10 Stations/Machines by work order volume """
 
     if not filtered_df.empty:
-
         station_machine_df = filtered_df.copy()
         
         station_machine_df['Station_Machine'] = (
@@ -220,7 +250,7 @@ def StationMachine_top():
         st.info("No data available for station/machine analysis")
 
 def staffActivity_types():
-    """Staff activity types - what types of work each staff member specializes in"""
+    """ Staff activity types """
     
     if not filtered_df.empty:
         staff_activity_df = pd.crosstab(
@@ -255,25 +285,6 @@ def staffActivity_types():
     else:
         st.info("No data available for staff activity types analysis")
 
-# tabs = ui.tabs(options=["Overview", "Details"], default_value="Overview", key="dashboard_tabs")
-
-# if tabs == "Overview":
-#     metric_cards()
-#     column = st.columns([1, 1])
-#     with column[0]:
-#         with st.container():
-#             workOrder_statusDist()
-#     with column[1]:
-#         with st.container():
-#             workOrder_status()
-
-#     with st.container():
-#         workOrder_trend()
-        
-# elif tabs == "Details":
-#     with st.container():
-#         staffActivity_types()
-
 tab1, tab2 = st.tabs(["Overview", "Analytics"], default="Overview")
 
 with tab1:
@@ -289,5 +300,5 @@ with tab1:
         workOrder_trend()
 
 with tab2:
-      with st.container():
+    with st.container():
         staffActivity_types()
