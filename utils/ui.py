@@ -64,8 +64,7 @@ def metric_card_css():
         color: #6c757d;
         font-weight: 600;
         font-size: 14px;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
+        letter-spacing: 0.1px;
     }
     
     /* Metric value styling */

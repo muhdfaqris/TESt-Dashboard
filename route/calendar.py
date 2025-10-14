@@ -71,7 +71,7 @@ CALENDAR_OPTIONS = {
     "dayMaxEvents": 3,
     "height": "auto",  # Auto height
     "contentHeight": "auto",  # Auto content height
-    "aspectRatio": 1.5,  # Maintain aspect ratio
+    #"aspectRatio": 1.5,  # Maintain aspect ratio
     "eventDisplay": "block",
     "displayEventTime": False,
     "moreLinkClick": "popover",
@@ -81,7 +81,7 @@ CUSTOM_CSS = """
 /* Calendar Container - Auto Resize */
 .fc {
     height: auto !important;
-    min-height: 600px !important;
+    min-height: 1000px !important;
 }
 
 .fc-view-harness {
@@ -355,6 +355,15 @@ CUSTOM_CSS = """
     background-color: #f8f9fa !important;
 }
 """
+
+st.markdown("""
+<style>
+    iframe[title="streamlit_calendar.calendar"] {
+        height: 2000px !important;  /* Match your calendar height + padding */
+        min-height: auto !important;
+    }
+</style>
+""", unsafe_allow_html=True)
 
 # Render calendar
 if calendar_events:
